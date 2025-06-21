@@ -1,0 +1,549 @@
+<!DOCTYPE>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Philippine Recipies System - Filipino Food Blog</title>
+  <style>
+    :root {
+      --green: #4c93af;
+      --yellow: #ffc107;
+      --brown: #6d4c41;
+      --bg: #fffef9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: var(--green);
+      color: white;
+      padding: 20px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    nav {
+      margin-bottom: 10px;
+    }
+
+    nav a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: #ffe;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      color: var(--yellow);
+    }
+
+    .search-bar {
+      margin-top: 10px;
+    }
+
+    .search-bar input {
+      padding: 8px 12px;
+      width: 100%;
+      max-width: 300px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .hero {
+      background: url('https://pinascuisine.com/wp-content/uploads/2024/02/l-intro-1683732411.jpg') center/cover no-repeat;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      position: relative;
+      padding: 0 20px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .hero h2 {
+      position: relative;
+      z-index: 2;
+      font-size: 48px;
+      max-width: 700px;
+      text-shadow: 2px 2px 8px #000;
+    }
+
+    .content {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+      display: none; /* hidden by default */
+    }
+
+    .section-title {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: var(--brown);
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .post {
+      background-color: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .post:hover {
+      transform: translateY(-5px);
+    }
+
+    .post img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .post h3 {
+      padding: 15px;
+      font-size: 20px;
+      color: var(--green);
+    }
+
+    footer {
+      background-color: var(--brown);
+      color: #fff8e1;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    /* Show content when active */
+    .content.active {
+      display: block;
+    }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 10px;
+      max-width: 700px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 30px;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h2 {
+      color: var(--green);
+      margin-bottom: 15px;
+    }
+
+    .modal-content h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: var(--brown);
+    }
+
+    .modal-content ul {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      list-style-type: disc;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--brown);
+      color: white;
+      border: none;
+      font-size: 18px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 32px;
+      }
+      header {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Philippine Recipies System</h1>
+    <nav>
+      <a onclick="showHome()">Home</a>
+      <a onclick="showDishes()">Dishes</a>
+      <a onclick="showAbout()">About</a>
+    </nav>
+    <center>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search for a recipe..." onkeyup="filterRecipes()" />
+      </div>
+    </center>
+  </header>
+
+  <div class="hero" id="homeSection">
+    <h2>Authentic Filipino Flavors Straight from the Heart</h2>
+  </div>
+
+  <section class="content" id="dishes">
+    <h2 class="section-title">Pinoy Favorites</h2>
+    <div class="grid" id="recipeGrid">
+      <div class="post" onclick="showRecipe('adobo')">
+        <img src="https://i.ibb.co/wNrb52sz/adobo.jpg" alt="adobo" border="0"></a>
+        <h3>Classic Chicken Adobo</h3>
+      </div>
+      <div class="post" onclick="showRecipe('sinigang')">
+        <img src="https://i.ibb.co/mFt5VNXP/7dcb3033f5389ca5e87d6bd74707616e.jpg" alt="7dcb3033f5389ca5e87d6bd74707616e" border="0"></a>
+        <h3>Sinigang na Baboy</h3>
+      </div>
+      <div class="post" onclick="showRecipe('lechon')">
+        <img src="https://i.ibb.co/1GFfjHzq/755c1f31ff24c916e01a0df4060e87f9.jpg" alt="755c1f31ff24c916e01a0df4060e87f9" border="0"></a>
+        <h3>Crispy Lechon</h3>
+      </div>
+      <div class="post" onclick="showRecipe('kare-kare')">
+        <img src="https://i.ibb.co/wFzMnL36/975880a8a8c19b029f64e6c7b0389dc7.jpg" alt="975880a8a8c19b029f64e6c7b0389dc7" border="0"></a>
+        <h3>Kare-Kare with Bagoong</h3>
+      </div>
+      <div class="post" onclick="showRecipe('bicol-express')">
+        <img src="https://i.ibb.co/23j5Gk1g/a1bb538d3a8c0e5d0b601cc4fab60284.jpg" alt="a1bb538d3a8c0e5d0b601cc4fab60284" border="0"></a>
+        <h3>Bicol Express</h3>
+      </div>
+    </div>
+  </section>
+
+  <section class="content" id="about">
+    <h2 class="section-title">About Philippine Recipies System</h2>
+    <p style="max-width: 800px; margin: 0 auto 20px; font-size: 18px; line-height: 1.5;">
+      Welcome to Lasang Pinoy, your go-to Filipino food blog dedicated to celebrating the rich culinary heritage of the Philippines. Filipino cuisine is a delightful fusion of indigenous flavors, Spanish, Chinese, and other influences that reflect the country's vibrant culture and history.
+    </p>
+    <p style="max-width: 800px; margin: 0 auto 20px; font-size: 18px; line-height: 1.5;">
+      From the tangy and savory Adobo to the sour and refreshing Sinigang, our recipes bring you the authentic tastes enjoyed across Filipino households. Whether you're a seasoned cook or just starting your culinary journey, our easy-to-follow recipes, cooking tips, and food stories will inspire you to create delicious Filipino dishes in your own kitchen.
+    </p>
+    <p style="max-width: 800px; margin: 0 auto 20px; font-size: 18px; line-height: 1.5;">
+      Join us as we explore classic favorites and hidden gems of Filipino cuisine, sharing the heart and soul behind every dish. Sarap ng buhay, lasa ng bayan!
+    </p>
+  </section>
+
+  <!-- Recipe Modal -->
+  <div class="modal" id="recipeModal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeRecipe()">Close</button>
+      <h2 id="recipeTitle"></h2>
+      <h3>Ingredients</h3>
+      <ul id="recipeIngredients"></ul>
+      <h3>Instructions</h3>
+      <ol id="recipeInstructions"></ol>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Philippine Recipies System. Sarap ng buhay, lasa ng bayan.
+  </footer>
+
+  <script>
+    function filterRecipes() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const posts = document.querySelectorAll('.post');
+
+      posts.forEach(post => {
+        const title = post.querySelector('h3').textContent.toLowerCase();
+        post.style.display = title.includes(input) ? 'block' : 'none';
+      });
+    }
+
+    // Show/hide sections
+    function showDishes() {
+      hideAllContents();
+      const dishes = document.getElementById('dishes');
+      dishes.classList.add('active');
+      dishes.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function showAbout() {
+      hideAllContents();
+      const about = document.getElementById('about');
+      about.classList.add('active');
+      about.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function showHome() {
+      hideAllContents();
+      const home = document.getElementById('homeSection');
+      home.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function hideAllContents() {
+      document.querySelectorAll('.content').forEach(section => {
+        section.classList.remove('active');
+      });
+    }
+
+    // Recipe data
+    const recipes = {
+      "adobo": {
+        title: "Classic Chicken Adobo",
+        ingredients: [
+          "1 kg chicken pieces",
+          "1/2 cup soy sauce",
+          "1/2 cup vinegar",
+          "6 cloves garlic, crushed",
+          "2 bay leaves",
+          "1 tsp whole black peppercorns",
+          "1 tbsp cooking oil",
+          "1 cup water",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "In a large bowl, marinate chicken with soy sauce, garlic, and bay leaves for at least 1 hour.",
+          "Heat oil in a pot over medium heat and brown the chicken pieces.",
+          "Pour in the marinade along with water, vinegar, and peppercorns.",
+          "Bring to a boil, then simmer for 30-40 minutes until chicken is tender.",
+          "Season with salt and pepper as needed.",
+          "Serve hot with steamed rice."
+        ]
+      },
+      "sinigang": {
+        title: "Sinigang na Baboy",
+        ingredients: [
+          "1 kg pork ribs or belly",
+          "1 large onion, quartered",
+          "2 medium tomatoes, quartered",
+          "1 pack tamarind soup base mix",
+          "2 cups water spinach (kangkong)",
+          "1 radish, sliced",
+          "2 long green chili peppers",
+          "6 cups water",
+          "Salt or fish sauce to taste"
+        ],
+        instructions: [
+          "In a large pot, boil pork with onions and tomatoes until tender.",
+          "Add tamarind soup base mix and stir to dissolve.",
+          "Add radish and cook until slightly soft.",
+          "Add water spinach and chili peppers, cook for 2 minutes.",
+          "Season with salt or fish sauce to taste.",
+          "Serve hot with steamed rice."
+        ]
+      },
+      "lechon": {
+        title: "Crispy Lechon",
+        ingredients: [
+          "1 whole piglet (about 20 lbs), cleaned and prepared",
+          "Salt and pepper",
+          "Lemongrass stalks",
+          "Garlic cloves",
+          "Vinegar"
+        ],
+        instructions: [
+          "Rub the cleaned piglet with salt, pepper, and vinegar inside and out.",
+          "Stuff the cavity with lemongrass and crushed garlic.",
+          "Skewer the piglet on a bamboo pole for roasting.",
+          "Roast over charcoal fire for 4-6 hours, turning occasionally until skin is crispy and meat is tender.",
+          "Serve with liver sauce or vinegar dip."
+        ]
+      },
+      "kare-kare": {
+        title: "Kare-Kare with Bagoong",
+        ingredients: [
+          "1/2 kg oxtail, cut into pieces",
+          "200g tripe (optional)",
+          "1 banana heart, sliced",
+          "1 bundle string beans",
+          "1 bundle eggplant, sliced",
+          "1/2 cup peanut butter",
+          "1/4 cup toasted ground rice",
+          "1 onion, chopped",
+          "3 cloves garlic, minced",
+          "6 cups water",
+          "Bagoong (fermented shrimp paste) for serving"
+        ],
+        instructions: [
+          "Boil oxtail and tripe in water until tender.",
+          "Add onions and garlic to the broth and cook until fragrant.",
+          "Add peanut butter and ground rice; stir to combine.",
+          "Add vegetables and cook until tender.",
+          "Serve hot with bagoong on the side."
+        ]
+      },
+      "laing": {
+        title: "Laing (Taro Leaves in Coconut Milk)",
+        ingredients: [
+          "500g dried taro leaves",
+          "2 cups coconut milk",
+          "1 cup thick coconut cream",
+          "4 cloves garlic, minced",
+          "1 onion, chopped",
+          "1 thumb-sized ginger, sliced",
+          "3 pcs dried red chili peppers",
+          "Salt and pepper to taste",
+          "1 tbsp shrimp paste (optional)"
+        ],
+        instructions: [
+          "In a pot, sauté garlic, onion, and ginger until fragrant.",
+          "Add coconut milk and bring to a gentle simmer.",
+          "Add dried taro leaves and cook gently; do not stir to avoid irritation.",
+          "Add chili peppers and shrimp paste, continue simmering until leaves are tender and coconut milk thickens.",
+          "Season with salt and pepper.",
+          "Serve with steamed rice."
+        ]
+      },
+      "leche-flan": {
+        title: "Leche Flan",
+        ingredients: [
+          "10 egg yolks",
+          "1 can (14 oz) sweetened condensed milk",
+          "1 can (12 oz) evaporated milk",
+          "1 cup sugar",
+          "1 tsp vanilla extract"
+        ],
+        instructions: [
+          "Caramelize sugar in a pan until golden brown and pour into flan molds.",
+          "Mix egg yolks, condensed milk, evaporated milk, and vanilla in a bowl.",
+          "Strain mixture to remove bubbles and pour into molds over caramel.",
+          "Cover molds with foil and steam for 30-40 minutes until set.",
+          "Cool before unmolding."
+        ]
+      },
+      "puto": {
+        title: "Puto (Steamed Rice Cake)",
+        ingredients: [
+          "2 cups rice flour",
+          "1 cup sugar",
+          "1 tbsp baking powder",
+          "1 1/2 cups water",
+          "1/2 cup coconut milk (optional)",
+          "Cheese slices for topping (optional)"
+        ],
+        instructions: [
+          "Combine rice flour, sugar, and baking powder in a bowl.",
+          "Add water and coconut milk; mix until smooth.",
+          "Pour batter into small molds and top with cheese if desired.",
+          "Steam for 15-20 minutes until cooked through.",
+          "Cool slightly before serving."
+        ]
+      },
+      "bicol-express": {
+        title: "Bicol Express",
+        ingredients: [
+          "500g pork belly, sliced",
+          "2 cups coconut milk",
+          "5 pcs red chili peppers, sliced",
+          "4 cloves garlic, minced",
+          "1 onion, chopped",
+          "2 tbsp shrimp paste (bagoong)",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "Sauté garlic and onion until fragrant.",
+          "Add pork belly and cook until browned.",
+          "Add shrimp paste and mix well.",
+          "Pour in coconut milk and bring to a boil.",
+          "Add chili peppers and simmer until sauce thickens and pork is tender.",
+          "Season with salt and pepper.",
+          "Serve hot with rice."
+        ]
+      }
+    };
+
+    // Show recipe modal with details
+    function showRecipe(key) {
+      const recipe = recipes[key];
+      if (!recipe) return;
+
+      document.getElementById('recipeTitle').textContent = recipe.title;
+
+      // Clear and fill ingredients
+      const ingredientsList = document.getElementById('recipeIngredients');
+      ingredientsList.innerHTML = "";
+      recipe.ingredients.forEach(ingredient => {
+        const li = document.createElement('li');
+        li.textContent = ingredient;
+        ingredientsList.appendChild(li);
+      });
+
+      // Clear and fill instructions
+      const instructionsList = document.getElementById('recipeInstructions');
+      instructionsList.innerHTML = "";
+      recipe.instructions.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        instructionsList.appendChild(li);
+      });
+
+      document.getElementById('recipeModal').classList.add('active');
+    }
+
+    function closeRecipe() {
+      document.getElementById('recipeModal').classList.remove('active');
+    }
+
+    // Show home content by default on load
+    window.onload = () => {
+      showHome();
+    }
+  </script>
+</body>
+</html>
